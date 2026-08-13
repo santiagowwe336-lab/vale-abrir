@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}{{ "Editar Pack" if editando else "Novo Pack" }} - Vale Abrir?{% endblock %}
+
+{% block content %}
+<div class="form-shell">
+    <section class="page-heading">
+        <div>
+            <p class="eyebrow">{{ "Edição" if editando else "Cadastro" }}</p>
+            <h1>{{ "Editar pack" if editando else "Novo pack" }}</h1>
+            <p class="mb-0">Dados principais usados no cálculo da simulação.</p>
+        </div>
+        <a href="{{ url_for('main.packs') }}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left" aria-hidden="true"></i>
+            <span>Packs</span>
+        </a>
+    </section>
+
+    <form method="post" class="card">
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-8">
+                    <label class="form-label" for="nome">Nome</label>
+                    <input class="form-control" id="nome" name="nome" required value="{{ pack.nome or '' }}">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label" for="jogo">Jogo</label>
+                    <select class="form-select" id="jogo" name="jogo">
+                        {% for jogo in jogos_disponiveis %}
+                            <option value="{{ jogo }}" {% if pack.jogo == jogo %}selected{% endif %}>{{ jogo }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-12">
+                    <label class="form-label" for="descricao">Descrição</label>
+                    <textarea class="form-control" id="descricao" name="descricao" rows="3">{{ pack.descricao or '' }}</textarea>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label" for="preco_pack">Preço do pack</label>
+                    <input class="form-control" id="preco_pack" name="preco_pack" inputmode="decimal" required value="{{ pack.preco_pack if pack.preco_pack is not none else '' }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label" for="quantidade_cartas_por_pack">Cartas por pack</label>
+                    <input class="form-control" id="quantidade_cartas_por_pack" name="quantidade_cartas_por_pack" type="number" min="6" max="6" required readonly value="6">
+                </div>
+                <div class="col-md-7">
+                    <label class="form-label" for="carta_desejada_nome">Carta desejada</label>
+                    <input class="form-control" id="carta_desejada_nome" name="carta_desejada_nome" value="{{ pack.carta_desejada_nome or '' }}">
+                </div>
+                <div class="col-md-5">
+                    <label class="form-label" for="preco_carta_desejada_avulsa">Preço avulso</label>
+                    <input class="form-control" id="preco_carta_desejada_avulsa" name="preco_carta_desejada_avulsa" inputmode="decimal" value="{{ pack.preco_carta_desejada_avulsa if pack.preco_carta_desejada_avulsa is not none else '' }}">
+                </div>
+            </div>
+        </div>
+        <div class="card-footer bg-white">
+            <div class="action-row justify-content-end">
+                <a href="{{ url_for('main.packs') }}" class="btn btn-outline-secondary">
+                    <i class="bi bi-x-lg" aria-hidden="true"></i>
+                    <span>Cancelar</span>
+                </a>
+                <button class="btn btn-primary" type="submit">
+                    <i class="bi bi-check2" aria-hidden="true"></i>
+                    <span>{{ "Salvar alterações" if editando else "Cadastrar pack" }}</span>
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}

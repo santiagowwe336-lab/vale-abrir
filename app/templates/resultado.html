@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title %}Resultado de {{ nome_colecao }} - Vale Abrir?{% endblock %}
+
+{% block content %}
+<section class="result-heading">
+    <div>
+        <p class="eyebrow">{{ nome_colecao }}</p>
+        <h1>Suas cartas</h1>
+        <p>{{ simulacao.total_cartas_obtidas }} cartas em {{ simulacao.quantidade_packs }} {{ "pack" if simulacao.quantidade_packs == 1 else "packs" }}.</p>
+    </div>
+    <div class="quick-actions">
+        <a href="{{ url_for('main.simular', pack_id=pack.id) }}" class="btn btn-primary">
+            <i class="bi bi-arrow-repeat" aria-hidden="true"></i>
+            <span>Simular novamente</span>
+        </a>
+        <a href="{{ url_for('main.index') }}" class="btn btn-outline-secondary">
+            <i class="bi bi-grid" aria-hidden="true"></i>
+            <span>Trocar coleção</span>
+        </a>
+    </div>
+</section>
+
+<section class="cards-value-summary" aria-label="Valor total das cartas">
+    <span>Valor das cartas desta simulação</span>
+    <strong>{{ simulacao.valor_total_estimado|brl }}</strong>
+    <small>Estimativa baseada no valor individual de cada carta sorteada.</small>
+</section>
+
+<section class="result-list" aria-labelledby="tituloCartas">
+    <div class="hall-section-heading">
+        <h2 id="tituloCartas">Cartas sorteadas</h2>
+        <span>{{ simulacao.cartas_obtidas|length }} {{ "tipo" if simulacao.cartas_obtidas|length == 1 else "tipos" }}</span>
+    </div>
+
+    {% if simulacao.cartas_obtidas %}
+        <div class="pulled-card-grid">
+            {% for carta in simulacao.cartas_obtidas %}
+                <article class="pulled-card">
+                    <div class="pulled-card-image">
+                        {% if carta.imagem_url %}
+                            <img src="{{ carta.imagem_url }}" alt="Imagem de {{ carta.nome }}" loading="lazy">
+                        {% else %}
+                            <span>Sem imagem</span>
+                        {% endif %}
+                        <strong class="pulled-card-count">x{{ carta.quantidade }}</strong>
+                    </div>
+                    <div class="pulled-card-body">
+                        <div>
+                            <h3>{{ carta.nome }}</h3>
+                            <p>{{ carta.raridade }}</p>
+                        </div>
+                        <div class="card-price-row">
+                            <span>{{ "Valor da carta" if carta.quantidade == 1 else "Valor unitário" }}</span>
+                            <strong>{{ carta.valor_unitario|brl }}</strong>
+                        </div>
+                        {% if carta.quantidade > 1 %}
+                            <div class="card-price-row card-price-total">
+                                <span>Valor das {{ carta.quantidade }} cartas</span>
+                                <strong>{{ carta.valor_total|brl }}</strong>
+                            </div>
+                        {% endif %}
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <h3 class="h6">Nenhuma carta apareceu nesta rodada.</h3>
+            <p class="text-muted mb-3">Tente uma nova simulação.</p>
+            <a href="{{ url_for('main.simular', pack_id=pack.id) }}" class="btn btn-primary">Simular novamente</a>
+        </div>
+    {% endif %}
+</section>
+{% endblock %}

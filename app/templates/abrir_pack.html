@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+
+{% block title %}Abrir {{ nome_colecao }} - Vale Abrir?{% endblock %}
+
+{% block content %}
+<section
+    class="pack-opening"
+    data-pack-opening
+    data-total-cards="{{ cartas|length }}"
+    data-cards-per-pack="{{ cartas_por_pack }}"
+    data-highlights="{{ 'true' if modo_destaques else 'false' }}"
+>
+    <header class="opening-toolbar">
+        <div>
+            <span class="opening-kicker">{{ "Destaques da abertura" if modo_destaques else nome_colecao }}</span>
+            <strong data-opening-status>{{ "Pronto para abrir" if not modo_destaques else "Suas melhores cartas" }}</strong>
+        </div>
+        <a href="{{ url_for('main.resultado', simulacao_id=simulacao.id) }}" class="skip-opening">
+            Pular animação
+            <i class="bi bi-skip-forward-fill" aria-hidden="true"></i>
+        </a>
+    </header>
+
+    <div class="opening-progress" aria-hidden="true">
+        <span data-opening-progress></span>
+    </div>
+
+    <div class="opening-stage">
+        <div class="pack-scene" data-pack-scene>
+            <p class="pack-number" data-pack-number>
+                {% if modo_destaques %}
+                    6 destaques de {{ simulacao.quantidade_packs }} packs
+                {% else %}
+                    Pack 1 de {{ simulacao.quantidade_packs }}
+                {% endif %}
+            </p>
+
+            <button class="booster-button" type="button" data-open-pack aria-label="Abrir pack">
+                <span class="booster-pack" aria-hidden="true">
+                    <span class="booster-seal booster-seal-top"></span>
+                    <span class="booster-shine"></span>
+                    <span class="booster-content">
+                        {% if colecao and colecao.logo_url %}
+                            <img src="{{ colecao.logo_url }}" alt="" class="booster-logo">
+                        {% else %}
+                            <span class="booster-brand">Vale Abrir?</span>
+                        {% endif %}
+                        <span class="booster-orb"><i class="bi bi-stars"></i></span>
+                        <span class="booster-copy">{{ nome_colecao }}</span>
+                        <span class="booster-card-count">6 cartas</span>
+                    </span>
+                    <span class="booster-seal booster-seal-bottom"></span>
+                    <span class="booster-tear-line"></span>
+                </span>
+            </button>
+
+            <h1>{{ "Revelar destaques" if modo_destaques else "Abra seu pack" }}</h1>
+            <p>{{ "Veja as seis cartas mais valiosas da simulação." if modo_destaques else "Toque no pack para rasgar e começar a revelar." }}</p>
+            <button class="btn btn-primary btn-lg open-pack-action" type="button" data-open-pack>
+                <i class="bi bi-stars" aria-hidden="true"></i>
+                <span>{{ "Revelar cartas" if modo_destaques else "Abrir pack" }}</span>
+            </button>
+        </div>
+
+        <div class="reveal-scene" data-reveal-scene hidden>
+            <div class="reveal-counter" data-reveal-counter>1 de 6</div>
+
+            <div class="reveal-card-area">
+                <span class="card-stack-layer card-stack-layer-one" aria-hidden="true"></span>
+                <span class="card-stack-layer card-stack-layer-two" aria-hidden="true"></span>
+
+                {% for carta in cartas %}
+                    <article
+                        class="reveal-card"
+                        data-reveal-card
+                        data-index="{{ loop.index0 }}"
+                        data-value="{{ carta.valor_unitario|float }}"
+                        data-rarity="{{ carta.raridade }}"
+                        hidden
+                    >
+                        <span class="final-card-label" data-final-label hidden>
+                            <i class="bi bi-stars" aria-hidden="true"></i>
+                            Última carta
+                        </span>
+                        <div class="reveal-card-image">
+                            {% if carta.imagem_url %}
+                                <img src="{{ carta.imagem_url }}" alt="Imagem de {{ carta.nome }}" draggable="false">
+                            {% else %}
+                                <span class="reveal-card-placeholder"><i class="bi bi-card-image"></i></span>
+                            {% endif %}
+                            <span class="card-holo" aria-hidden="true"></span>
+                        </div>
+                        <div class="reveal-card-info">
+                            <div>
+                                <h2>{{ carta.nome }}</h2>
+                                <p>{{ carta.raridade }}</p>
+                            </div>
+                            <div class="reveal-card-price">
+                                <span>Valor</span>
+                                <strong>{{ carta.valor_unitario|brl }}</strong>
+                            </div>
+                        </div>
+                    </article>
+                {% endfor %}
+            </div>
+
+            <button class="btn btn-primary btn-lg reveal-next" type="button" data-reveal-next>
+                <span>Próxima carta</span>
+                <i class="bi bi-arrow-right" aria-hidden="true"></i>
+            </button>
+            <p class="reveal-hint"><i class="bi bi-hand-index-thumb"></i> Toque na carta, arraste ou use a seta do teclado</p>
+        </div>
+
+        <div class="opening-complete" data-opening-complete hidden>
+            <span class="complete-icon" aria-hidden="true"><i class="bi bi-check2"></i></span>
+            <p class="eyebrow">Abertura concluída</p>
+            <h1>Você revelou todas as cartas!</h1>
+            <p>Agora veja a coleção completa e o valor das cartas sorteadas.</p>
+            <a href="{{ url_for('main.resultado', simulacao_id=simulacao.id) }}" class="btn btn-primary btn-lg">
+                <span>Ver resultado completo</span>
+                <i class="bi bi-arrow-right" aria-hidden="true"></i>
+            </a>
+        </div>
+    </div>
+
+    <div class="confetti-layer" data-confetti aria-hidden="true"></div>
+</section>
+{% endblock %}

@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Sincronizar Pokémon - Vale Abrir?{% endblock %}
+
+{% block content %}
+<div class="form-shell">
+    <section class="page-heading">
+        <div>
+            <p class="eyebrow">Pokémon</p>
+            <h1>Sincronizar coleções</h1>
+            <p class="mb-0">Carrega coleções da Pokémon TCG API para a biblioteca local.</p>
+        </div>
+        <a href="{{ url_for('main.pokemon_colecoes') }}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left" aria-hidden="true"></i>
+            <span>Coleções</span>
+        </a>
+    </section>
+
+    <section class="card">
+        <div class="card-body">
+            <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-3">
+                <div>
+                    <span class="badge badge-soft mb-2">API oficial</span>
+                    <h2 class="h4 fw-bold mb-1">Pokémon TCG API</h2>
+                    <p class="text-muted mb-0">A chave é opcional, mas melhora os limites de consulta.</p>
+                </div>
+                {% if api_key_configurada %}
+                    <span class="badge text-bg-success">API key configurada</span>
+                {% else %}
+                    <span class="badge text-bg-secondary">Sem API key</span>
+                {% endif %}
+            </div>
+            <form method="post" class="action-row">
+                <button class="btn btn-primary" type="submit">
+                    <i class="bi bi-cloud-arrow-down" aria-hidden="true"></i>
+                    <span>Sincronizar coleções</span>
+                </button>
+                <a href="{{ url_for('main.pokemon_colecoes') }}" class="btn btn-outline-primary">
+                    <i class="bi bi-lightning-charge" aria-hidden="true"></i>
+                    <span>Ver biblioteca</span>
+                </a>
+            </form>
+        </div>
+    </section>
+
+    <div class="notice mt-3">
+        Ao criar um pack, o sistema grava os valores convertidos em BRL e usa chances estimadas por raridade.
+    </div>
+</div>
+{% endblock %}

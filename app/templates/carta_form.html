@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block title %}{{ "Editar Carta" if editando else "Nova Carta" }} - Vale Abrir?{% endblock %}
+
+{% block content %}
+<div class="form-shell">
+    <section class="page-heading">
+        <div>
+            <p class="eyebrow">{{ pack.nome }}</p>
+            <h1>{{ "Editar carta" if editando else "Nova carta" }}</h1>
+            <p class="mb-0">Valor, chance e imagem usados na abertura simulada.</p>
+        </div>
+        <a href="{{ url_for('main.pack_detail', pack_id=pack.id) }}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left" aria-hidden="true"></i>
+            <span>Pack</span>
+        </a>
+    </section>
+
+    <form method="post" class="card">
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-8">
+                    <label class="form-label" for="nome">Nome</label>
+                    <input class="form-control" id="nome" name="nome" required value="{{ carta.nome or '' }}">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label" for="raridade">Raridade</label>
+                    <input class="form-control" id="raridade" name="raridade" value="{{ carta.raridade or '' }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label" for="valor_estimado">Valor estimado</label>
+                    <input class="form-control" id="valor_estimado" name="valor_estimado" inputmode="decimal" required value="{{ carta.valor_estimado if carta.valor_estimado is not none else '' }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label" for="chance_aparicao">Chance de aparição (%)</label>
+                    <input class="form-control" id="chance_aparicao" name="chance_aparicao" inputmode="decimal" required value="{{ carta.chance_aparicao if carta.chance_aparicao is not none else '' }}">
+                </div>
+                <div class="col-12">
+                    <label class="form-label" for="imagem_url">Imagem URL</label>
+                    <input class="form-control" id="imagem_url" name="imagem_url" value="{{ carta.imagem_url or '' }}" data-image-preview="#previewCarta">
+                    <img id="previewCarta" class="image-preview mt-2 {% if not carta.imagem_url %}d-none{% endif %}" src="{{ carta.imagem_url or '' }}" alt="Prévia da carta">
+                </div>
+                <div class="col-12">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="is_carta_desejada" name="is_carta_desejada" {% if carta.is_carta_desejada %}checked{% endif %}>
+                        <label class="form-check-label fw-semibold" for="is_carta_desejada">Carta desejada</label>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <label class="form-label" for="observacao">Observação</label>
+                    <textarea class="form-control" id="observacao" name="observacao" rows="3">{{ carta.observacao or '' }}</textarea>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer bg-white">
+            <div class="action-row justify-content-end">
+                <a href="{{ url_for('main.pack_detail', pack_id=pack.id) }}" class="btn btn-outline-secondary">
+                    <i class="bi bi-x-lg" aria-hidden="true"></i>
+                    <span>Cancelar</span>
+                </a>
+                <button class="btn btn-primary" type="submit">
+                    <i class="bi bi-check2" aria-hidden="true"></i>
+                    <span>{{ "Salvar alterações" if editando else "Cadastrar carta" }}</span>
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}

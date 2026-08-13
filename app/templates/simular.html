@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}Simular {{ nome_colecao }} - Vale Abrir?{% endblock %}
+
+{% block content %}
+<div class="simulation-shell">
+    <a href="{{ url_for('main.index') }}" class="back-link">
+        <i class="bi bi-arrow-left" aria-hidden="true"></i>
+        <span>Escolher outra coleção</span>
+    </a>
+
+    <section class="simulation-heading">
+        <span class="simulation-icon" aria-hidden="true"><i class="bi bi-box-seam"></i></span>
+        <p class="eyebrow">{{ nome_colecao }}</p>
+        <h1>Quantos packs você quer abrir?</h1>
+        <p>Cada pack sorteia 6 cartas desta coleção.</p>
+    </section>
+
+    {% if not pack.cartas %}
+        <div class="notice mb-3">
+            Esta coleção ainda não possui cartas disponíveis para a simulação.
+        </div>
+    {% endif %}
+
+    <form method="post" class="simulation-form">
+        <fieldset>
+            <legend class="visually-hidden">Quantidade de packs</legend>
+            <div class="simulation-options">
+                {% for quantidade in quantidades %}
+                    <input class="btn-check" type="radio" name="quantidade_packs" id="qtd{{ quantidade }}" value="{{ quantidade }}" {% if loop.first %}checked{% endif %}>
+                    <label class="quantity-option" for="qtd{{ quantidade }}">
+                        <strong>{{ quantidade }}</strong>
+                        <span>{{ "pack" if quantidade == 1 else "packs" }}</span>
+                    </label>
+                {% endfor %}
+                <input class="btn-check" type="radio" name="quantidade_packs" id="qtdPersonalizada" value="personalizada">
+                <label class="quantity-option" for="qtdPersonalizada">
+                    <i class="bi bi-sliders" aria-hidden="true"></i>
+                    <span>Outra quantidade</span>
+                </label>
+            </div>
+        </fieldset>
+
+        <div class="custom-quantity d-none" id="campoQuantidadePersonalizada">
+            <label for="quantidade_personalizada">Digite a quantidade</label>
+            <input type="number" min="1" max="10000" id="quantidade_personalizada" name="quantidade_personalizada" value="25">
+        </div>
+
+        <button class="btn btn-primary btn-lg simulation-submit" type="submit" {% if not pack.cartas %}disabled{% endif %}>
+            <i class="bi bi-stars" aria-hidden="true"></i>
+            <span>Simular abertura</span>
+        </button>
+    </form>
+</div>
+{% endblock %}

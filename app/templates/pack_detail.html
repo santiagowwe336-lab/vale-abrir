@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+
+{% block title %}{{ pack.nome }} - Vale Abrir?{% endblock %}
+
+{% block content %}
+<section class="page-heading">
+    <div>
+        <p class="eyebrow">{{ pack.jogo }}</p>
+        <h1>{{ pack.nome }}</h1>
+        <p class="mb-0">{{ pack.descricao or "Sem descrição cadastrada." }}</p>
+    </div>
+    <div class="quick-actions">
+        <a href="{{ url_for('main.packs') }}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left" aria-hidden="true"></i>
+            <span>Packs</span>
+        </a>
+        <a href="{{ url_for('main.pack_editar', pack_id=pack.id) }}" class="btn btn-outline-primary">
+            <i class="bi bi-pencil" aria-hidden="true"></i>
+            <span>Editar</span>
+        </a>
+        <a href="{{ url_for('main.carta_nova', pack_id=pack.id) }}" class="btn btn-outline-primary">
+            <i class="bi bi-plus-lg" aria-hidden="true"></i>
+            <span>Carta</span>
+        </a>
+        {% if pack.cartas %}
+            <a href="{{ url_for('main.simular', pack_id=pack.id) }}" class="btn btn-primary">
+                <i class="bi bi-play-fill" aria-hidden="true"></i>
+                <span>Simular</span>
+            </a>
+        {% else %}
+            <button class="btn btn-primary" type="button" disabled>
+                <i class="bi bi-play-fill" aria-hidden="true"></i>
+                <span>Simular</span>
+            </button>
+        {% endif %}
+    </div>
+</section>
+
+<section class="metric-grid">
+    <div class="metric-box">
+        <span>Preço do pack</span>
+        <strong>{{ pack.preco_pack|brl }}</strong>
+    </div>
+    <div class="metric-box">
+        <span>Cartas por pack</span>
+        <strong>{{ pack.quantidade_cartas_por_pack }}</strong>
+    </div>
+    <div class="metric-box">
+        <span>Carta desejada</span>
+        <strong>{{ pack.carta_desejada_nome or "Não definida" }}</strong>
+    </div>
+    <div class="metric-box">
+        <span>Preço avulso</span>
+        <strong>{{ pack.preco_carta_desejada_avulsa|brl }}</strong>
+    </div>
+</section>
+
+<section>
+    <div class="page-heading mb-3">
+        <div>
+            <h2 class="section-title mb-1">Cartas cadastradas</h2>
+            <p class="mb-0 text-muted">{{ pack.cartas|length }} carta(s) neste pack.</p>
+        </div>
+        <a href="{{ url_for('main.carta_nova', pack_id=pack.id) }}" class="btn btn-outline-primary">
+            <i class="bi bi-plus-lg" aria-hidden="true"></i>
+            <span>Adicionar carta</span>
+        </a>
+    </div>
+
+    {% if pack.cartas %}
+        <div class="trading-card-grid">
+            {% for carta in pack.cartas %}
+                <article class="card h-100">
+                    {% if carta.imagem_url %}
+                        <img src="{{ carta.imagem_url }}" class="card-img-top card-thumb" alt="Imagem de {{ carta.nome }}">
+                    {% endif %}
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between gap-2 align-items-start mb-2">
+                            <div>
+                                <h3 class="h5 fw-bold mb-1">{{ carta.nome }}</h3>
+                                <p class="text-muted small mb-0">{{ carta.raridade or "Sem raridade" }}</p>
+                            </div>
+                            {% if carta.is_carta_desejada %}
+                                <span class="badge badge-accent">Desejada</span>
+                            {% endif %}
+                        </div>
+                        <div class="mini-stat-grid">
+                            <div class="mini-stat">
+                                <span>Valor</span>
+                                <strong>{{ carta.valor_estimado|brl }}</strong>
+                            </div>
+                            <div class="mini-stat">
+                                <span>Chance</span>
+                                <strong>{{ carta.chance_aparicao|percentual }}</strong>
+                            </div>
+                        </div>
+                        {% if carta.observacao %}
+                            <p class="small text-muted mt-3 mb-0">{{ carta.observacao }}</p>
+                        {% endif %}
+                    </div>
+                    <div class="card-footer bg-white">
+                        <div class="action-row justify-content-end">
+                            <a href="{{ url_for('main.carta_editar', carta_id=carta.id) }}" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-pencil" aria-hidden="true"></i>
+                                <span>Editar</span>
+                            </a>
+                            <form method="post" action="{{ url_for('main.carta_excluir', carta_id=carta.id) }}" data-confirm="Excluir esta carta?" class="d-inline-flex">
+                                <button class="btn btn-sm btn-outline-danger" type="submit">
+                                    <i class="bi bi-trash" aria-hidden="true"></i>
+                                    <span>Excluir</span>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <h2 class="h5">Nenhuma carta cadastrada neste pack.</h2>
+            <p class="text-muted">Adicione cartas com valor estimado e chance de aparição para liberar a simulação.</p>
+            <a href="{{ url_for('main.carta_nova', pack_id=pack.id) }}" class="btn btn-primary">
+                <i class="bi bi-plus-lg" aria-hidden="true"></i>
+                <span>Adicionar carta</span>
+            </a>
+        </div>
+    {% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block title %}Coleções Pokémon - Vale Abrir?{% endblock %}
+
+{% block content %}
+<section class="page-heading">
+    <div>
+        <p class="eyebrow">Biblioteca</p>
+        <h1>Coleções Pokémon</h1>
+        <p class="mb-0">Coleções importadas da Pokémon TCG API.</p>
+    </div>
+    <div class="quick-actions">
+        <a href="{{ url_for('main.pokemon_importar_colecoes') }}" class="btn btn-primary">
+            <i class="bi bi-cloud-arrow-down" aria-hidden="true"></i>
+            <span>Sincronizar</span>
+        </a>
+    </div>
+</section>
+
+<form class="card mb-3" method="get">
+    <div class="card-body">
+        <div class="row g-2">
+            <div class="col-md-10">
+                <label class="visually-hidden" for="buscaColecao">Buscar coleção</label>
+                <input class="form-control" id="buscaColecao" name="q" value="{{ busca }}" placeholder="Buscar coleção">
+            </div>
+            <div class="col-md-2 d-grid">
+                <button class="btn btn-outline-primary" type="submit">
+                    <i class="bi bi-search" aria-hidden="true"></i>
+                    <span>Buscar</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</form>
+
+{% if colecoes %}
+    <div class="collection-grid">
+        {% for colecao in colecoes %}
+            <article class="collection-card">
+                <div class="collection-media">
+                    {% if colecao.logo_url %}
+                        <img class="collection-logo" src="{{ colecao.logo_url }}" alt="Logo de {{ colecao.nome }}">
+                    {% else %}
+                        <span class="badge badge-soft">Pokémon</span>
+                    {% endif %}
+                    {% if colecao.simbolo_url %}
+                        <img class="collection-symbol" src="{{ colecao.simbolo_url }}" alt="Símbolo de {{ colecao.nome }}">
+                    {% endif %}
+                </div>
+                <div class="collection-card-body">
+                    <div class="collection-meta">
+                        <span>{{ colecao.serie or "Sem série" }}</span>
+                        <span>{{ colecao.data_lancamento or "Sem data" }}</span>
+                    </div>
+                    <div>
+                        <h2>{{ colecao.nome }}</h2>
+                        <p class="pack-description">{{ colecao.total_cartas }} carta(s) segundo a API.</p>
+                    </div>
+                    <div class="action-row">
+                        <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('main.pokemon_colecao_detail', colecao_id=colecao.id) }}">
+                            <i class="bi bi-eye" aria-hidden="true"></i>
+                            <span>Abrir</span>
+                        </a>
+                        <form method="post" action="{{ url_for('main.pokemon_importar_cartas', colecao_id=colecao.id) }}" class="d-inline-flex">
+                            <input type="hidden" name="atualizar_precos_brasil" value="on">
+                            <button class="btn btn-sm btn-outline-primary" type="submit">
+                                <i class="bi bi-cloud-arrow-down" aria-hidden="true"></i>
+                                <span>Cartas</span>
+                            </button>
+                        </form>
+                        <form method="post" action="{{ url_for('main.pokemon_criar_pack_simulavel', colecao_id=colecao.id) }}" class="d-inline-flex">
+                            <input type="hidden" name="atualizar_dados" value="on">
+                            <input type="hidden" name="quantidade_cartas_por_pack" value="6">
+                            <button class="btn btn-sm btn-success" type="submit">
+                                <i class="bi bi-play-fill" aria-hidden="true"></i>
+                                <span>Criar pack</span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </article>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="empty-state">
+        <h2 class="h5">Nenhuma coleção encontrada.</h2>
+        <p class="text-muted">Sincronize coleções da API para começar.</p>
+        <a href="{{ url_for('main.pokemon_importar_colecoes') }}" class="btn btn-primary">
+            <i class="bi bi-cloud-arrow-down" aria-hidden="true"></i>
+            <span>Sincronizar coleções</span>
+        </a>
+    </div>
+{% endif %}
+{% endblock %}

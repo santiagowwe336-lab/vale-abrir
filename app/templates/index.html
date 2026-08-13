@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block title %}Coleções - Vale Abrir?{% endblock %}
+
+{% block content %}
+<section class="hall-hero">
+    <div>
+        <p class="eyebrow">Simulador de abertura</p>
+        <h1>Escolha uma coleção</h1>
+        <p>Selecione a coleção que você quer abrir. Depois, escolha quantos packs deseja simular.</p>
+    </div>
+    <div class="hall-count" aria-label="Total de coleções">
+        <strong>{{ total_colecoes }}</strong>
+        <span>coleções disponíveis</span>
+    </div>
+</section>
+
+<form class="hall-search" method="get" role="search">
+    <i class="bi bi-search" aria-hidden="true"></i>
+    <label class="visually-hidden" for="buscaColecao">Buscar coleção</label>
+    <input
+        id="buscaColecao"
+        name="q"
+        type="search"
+        value="{{ busca }}"
+        placeholder="Busque pelo nome da coleção"
+        autocomplete="off"
+    >
+    {% if busca %}
+        <a href="{{ url_for('main.index') }}" aria-label="Limpar busca">Limpar</a>
+    {% endif %}
+    <button class="btn btn-primary" type="submit">Buscar</button>
+</form>
+
+{% if colecoes %}
+    <section aria-labelledby="tituloColecoes">
+        <div class="hall-section-heading">
+            <h2 id="tituloColecoes">{{ "Resultados" if busca else "Todas as coleções" }}</h2>
+            <span>{{ colecoes|length }} {{ "encontrada" if colecoes|length == 1 else "encontradas" }}</span>
+        </div>
+
+        <div class="collection-grid hall-collection-grid">
+            {% for colecao in colecoes %}
+                <article class="collection-card hall-collection-card">
+                    <div class="collection-media">
+                        {% if colecao.logo_url %}
+                            <img class="collection-logo" src="{{ colecao.logo_url }}" alt="Logo de {{ colecao.nome }}" loading="lazy">
+                        {% else %}
+                            <span class="collection-fallback" aria-hidden="true"><i class="bi bi-stars"></i></span>
+                        {% endif %}
+                        {% if colecao.simbolo_url %}
+                            <img class="collection-symbol" src="{{ colecao.simbolo_url }}" alt="" loading="lazy">
+                        {% endif %}
+                    </div>
+                    <div class="collection-card-body">
+                        <div class="collection-meta">
+                            <span>{{ colecao.serie or "Pokémon" }}</span>
+                            <span>{{ colecao.data_lancamento or "" }}</span>
+                        </div>
+                        <div class="collection-title">
+                            <h2>{{ colecao.nome }}</h2>
+                            <p>{{ colecao.total_cartas }} cartas na coleção</p>
+                        </div>
+                        <form method="post" action="{{ url_for('main.simular_colecao', colecao_id=colecao.id) }}">
+                            <button class="btn btn-primary w-100" type="submit">
+                                <i class="bi bi-play-fill" aria-hidden="true"></i>
+                                <span>Escolher e simular</span>
+                            </button>
+                        </form>
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+    </section>
+{% else %}
+    <div class="empty-state">
+        <span class="empty-state-icon" aria-hidden="true"><i class="bi bi-search"></i></span>
+        <h2 class="h5">Nenhuma coleção encontrada</h2>
+        {% if busca %}
+            <p class="text-muted">Tente buscar por outro nome.</p>
+            <a href="{{ url_for('main.index') }}" class="btn btn-primary">Ver todas as coleções</a>
+        {% else %}
+            <p class="text-muted">Importe as coleções para começar a simular.</p>
+            <a href="{{ url_for('main.pokemon_importar_colecoes') }}" class="btn btn-primary">Importar coleções</a>
+        {% endif %}
+    </div>
+{% endif %}
+{% endblock %}

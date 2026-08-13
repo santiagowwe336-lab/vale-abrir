@@ -1,0 +1,80 @@
+.static-brand,
+.navbar .nav-link,
+.back-link,
+.skip-opening {
+    border: 0;
+    background: transparent;
+}
+
+.static-brand {
+    padding: 0;
+    text-align: left;
+}
+
+.spa-view {
+    min-height: 60vh;
+}
+
+.static-alert {
+    margin-bottom: 1rem;
+    padding: 0.9rem 1rem;
+    border: 1px solid #f1b7ad;
+    border-radius: 10px;
+    background: #fff0ed;
+    color: #8f2f20;
+    font-weight: 700;
+}
+
+.static-loading {
+    grid-column: 1 / -1;
+    display: flex;
+    min-height: 220px;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    color: var(--text-soft);
+}
+
+.search-clear {
+    border: 0;
+    background: transparent;
+    color: var(--text-soft);
+    font-size: 0.86rem;
+    font-weight: 750;
+}
+
+.collection-card-button {
+    width: 100%;
+}
+
+.collection-source-note {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    color: var(--text-soft);
+    font-size: 0.72rem;
+}
+
+.static-empty {
+    grid-column: 1 / -1;
+}
+
+.simulation-loading {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.reveal-card-area .reveal-card {
+    position: absolute;
+}
+
+@media (max-width: 575.98px) {
+    .navbar .nav-link {
+        width: auto;
+    }
+
+    .static-brand {
+        width: auto;
+    }
+}

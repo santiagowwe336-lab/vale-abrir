@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+
+{% block title %}{{ colecao.nome }} - Vale Abrir?{% endblock %}
+
+{% block content %}
+<section class="page-heading">
+    <div>
+        <p class="eyebrow">{{ colecao.serie or "Pokémon" }}</p>
+        <h1>{{ colecao.nome }}</h1>
+        <p class="mb-0">{{ colecao.data_lancamento or "Sem data" }} · {{ colecao.total_cartas }} carta(s) segundo a API.</p>
+    </div>
+    <a href="{{ url_for('main.pokemon_colecoes') }}" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left" aria-hidden="true"></i>
+        <span>Coleções</span>
+    </a>
+</section>
+
+<section class="toolbar-panel mb-3">
+    <div class="row g-3 align-items-end">
+        <div class="col-lg-8">
+            <form method="post" action="{{ url_for('main.pokemon_criar_pack_simulavel', colecao_id=colecao.id) }}" class="row g-2 align-items-end">
+                <div class="col-sm-4">
+                    <label class="form-label small">Preço do pack</label>
+                    <div class="form-control bg-light fw-bold">R$ 14,99</div>
+                </div>
+                <div class="col-sm-3">
+                    <label class="form-label small" for="cartasPackSimulavel">Cartas</label>
+                    <input class="form-control" id="cartasPackSimulavel" name="quantidade_cartas_por_pack" type="number" min="6" max="6" value="6" readonly>
+                </div>
+                <div class="col-sm-5">
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="atualizarDadosPack" name="atualizar_dados" checked>
+                        <label class="form-check-label small fw-semibold" for="atualizarDadosPack">Atualizar dados antes</label>
+                    </div>
+                    <button class="btn btn-success w-100" type="submit">
+                        <i class="bi bi-play-fill" aria-hidden="true"></i>
+                        <span>Criar pack</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+        <div class="col-lg-4">
+            <form method="post" action="{{ url_for('main.pokemon_importar_cartas', colecao_id=colecao.id) }}" class="d-grid">
+                <button class="btn btn-outline-primary" type="submit">
+                    <i class="bi bi-cloud-arrow-down" aria-hidden="true"></i>
+                    <span>Importar/atualizar cartas</span>
+                </button>
+            </form>
+        </div>
+    </div>
+</section>
+
+<div class="notice mb-3">
+    A Pokémon TCG API não fornece pull rate físico oficial por carta. A chance automática é uma estimativa por raridade dentro da coleção.
+</div>
+
+{% if paginacao.items %}
+    <section class="trading-card-grid">
+        {% for carta in paginacao.items %}
+            <article class="card h-100">
+                {% if carta.imagem_pequena %}
+                    <a href="{{ carta.imagem_grande or carta.imagem_pequena }}" target="_blank" rel="noopener">
+                        <img src="{{ carta.imagem_pequena }}" class="card-img-top pokemon-card-image" alt="Imagem de {{ carta.nome }}">
+                    </a>
+                {% endif %}
+                <div class="card-body">
+                    <div class="d-flex justify-content-between gap-2 align-items-start mb-2">
+                        <div>
+                            <h2 class="h6 fw-bold mb-1">{{ carta.nome }}</h2>
+                            <p class="small text-muted mb-0">{{ carta.raridade or "Sem raridade" }}</p>
+                        </div>
+                        <span class="badge badge-soft">#{{ carta.numero or "-" }}</span>
+                    </div>
+                    <div class="small mb-3 pokemon-data-list">
+                        <div>
+                            <span>Preço internacional</span>
+                            <strong>{{ "$ %.2f"|format(carta.preco_api_usd|float) if carta.preco_api_usd is not none else "sem referência" }}</strong>
+                        </div>
+                        <div>
+                            <span>Preço BRL usado</span>
+                            <strong>{{ carta.preco_brl_efetivo|brl if carta.preco_brl_efetivo is not none else "sem preço" }}</strong>
+                        </div>
+                        <div>
+                            <span>Chance estimada</span>
+                            <strong>{{ carta.chance_estimativa|percentual if carta.chance_estimativa is not none else "sem estimativa" }}</strong>
+                        </div>
+                        <div>
+                            <span>Chance usada</span>
+                            <strong>{{ carta.chance_efetiva|percentual if carta.chance_efetiva is not none else "sem chance" }}</strong>
+                        </div>
+                    </div>
+                    {% if carta.chance_fonte %}
+                        <p class="small text-muted">{{ carta.chance_fonte }}</p>
+                    {% endif %}
+                    <form method="post" action="{{ url_for('main.pokemon_atualizar_carta', carta_id=carta.id) }}" class="row g-2">
+                        <div class="col-sm-6">
+                            <label class="form-label small" for="preco{{ carta.id }}">Preço manual</label>
+                            <input class="form-control form-control-sm" id="preco{{ carta.id }}" name="preco_manual_brl" inputmode="decimal" value="{{ carta.preco_manual_brl if carta.preco_manual_brl is not none else '' }}">
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label small" for="chance{{ carta.id }}">Chance manual %</label>
+                            <input class="form-control form-control-sm" id="chance{{ carta.id }}" name="chance_manual" inputmode="decimal" value="{{ carta.chance_manual if carta.chance_manual is not none else '' }}">
+                        </div>
+                        <div class="col-12">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="desejada{{ carta.id }}" name="is_carta_desejada" {% if carta.is_carta_desejada %}checked{% endif %}>
+                                <label class="form-check-label small fw-semibold" for="desejada{{ carta.id }}">Carta desejada</label>
+                            </div>
+                        </div>
+                        <div class="col-12 d-grid">
+                            <button class="btn btn-sm btn-outline-primary" type="submit">
+                                <i class="bi bi-check2" aria-hidden="true"></i>
+                                <span>Salvar ajustes</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </article>
+        {% endfor %}
+    </section>
+
+    {% if paginacao.pages > 1 %}
+        <nav class="mt-4" aria-label="Paginação das cartas">
+            <ul class="pagination justify-content-center flex-wrap gap-1">
+                <li class="page-item {% if not paginacao.has_prev %}disabled{% endif %}">
+                    <a class="page-link" href="{{ url_for('main.pokemon_colecao_detail', colecao_id=colecao.id, page=paginacao.prev_num) }}">Anterior</a>
+                </li>
+                <li class="page-item disabled">
+                    <span class="page-link">Página {{ paginacao.page }} de {{ paginacao.pages }}</span>
+                </li>
+                <li class="page-item {% if not paginacao.has_next %}disabled{% endif %}">
+                    <a class="page-link" href="{{ url_for('main.pokemon_colecao_detail', colecao_id=colecao.id, page=paginacao.next_num) }}">Próxima</a>
+                </li>
+            </ul>
+        </nav>
+    {% endif %}
+{% else %}
+    <div class="empty-state">
+        <h2 class="h5">Nenhuma carta importada para esta coleção.</h2>
+        <p class="text-muted">Crie um pack simulável ou importe cartas para preencher a coleção.</p>
+        <div class="action-row justify-content-center">
+            <form method="post" action="{{ url_for('main.pokemon_criar_pack_simulavel', colecao_id=colecao.id) }}" class="d-inline-flex">
+                <input type="hidden" name="atualizar_dados" value="on">
+                <input type="hidden" name="quantidade_cartas_por_pack" value="6">
+                <button class="btn btn-success" type="submit">
+                    <i class="bi bi-play-fill" aria-hidden="true"></i>
+                    <span>Criar pack</span>
+                </button>
+            </form>
+            <form method="post" action="{{ url_for('main.pokemon_importar_cartas', colecao_id=colecao.id) }}" class="d-inline-flex">
+                <button class="btn btn-outline-primary" type="submit">
+                    <i class="bi bi-cloud-arrow-down" aria-hidden="true"></i>
+                    <span>Importar cartas</span>
+                </button>
+            </form>
+        </div>
+    </div>
+{% endif %}
+{% endblock %}

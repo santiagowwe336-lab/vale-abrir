@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#22543d">
+    <meta name="description" content="Simule a abertura de coleções Pokémon e revele seis cartas por pack.">
+    <title>Vale Abrir? — Simulador TCG</title>
+    <link rel="preconnect" href="https://images.pokemontcg.io">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="./assets/style.css">
+    <link rel="stylesheet" href="./assets/pages.css">
+</head>
+<body>
+    <header class="app-topbar sticky-top">
+        <nav class="navbar">
+            <div class="container-xl">
+                <button class="navbar-brand static-brand" type="button" data-go-home>
+                    <span class="brand-mark" aria-hidden="true"><i class="bi bi-stars"></i></span>
+                    <span>
+                        <span class="brand-title">Vale Abrir?</span>
+                        <span class="brand-subtitle">Simulador TCG</span>
+                    </span>
+                </button>
+                <button class="nav-link ms-auto active" type="button" data-go-home>
+                    <i class="bi bi-grid" aria-hidden="true"></i>
+                    <span>Coleções</span>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <main class="app-main">
+        <div class="container-xl">
+            <div class="static-alert" data-alert role="alert" hidden></div>
+
+            <section class="spa-view" data-view="hall">
+                <section class="hall-hero">
+                    <div>
+                        <p class="eyebrow">Simulador de abertura</p>
+                        <h1>Escolha uma coleção</h1>
+                        <p>Selecione a coleção, escolha quantos packs abrir e revele as cartas uma por uma.</p>
+                    </div>
+                    <div class="hall-count" aria-label="Total de coleções">
+                        <strong data-total-collections>—</strong>
+                        <span>coleções disponíveis</span>
+                    </div>
+                </section>
+
+                <form class="hall-search" data-search-form role="search">
+                    <i class="bi bi-search" aria-hidden="true"></i>
+                    <label class="visually-hidden" for="buscaColecao">Buscar coleção</label>
+                    <input id="buscaColecao" data-search type="search" placeholder="Busque pelo nome da coleção" autocomplete="off">
+                    <button class="search-clear" data-clear-search type="button" hidden>Limpar</button>
+                    <button class="btn btn-primary" type="submit">Buscar</button>
+                </form>
+
+                <section aria-labelledby="tituloColecoes">
+                    <div class="hall-section-heading">
+                        <h2 id="tituloColecoes" data-hall-title>Todas as coleções</h2>
+                        <span data-collection-count>Carregando…</span>
+                    </div>
+                    <div class="collection-grid hall-collection-grid" data-collection-grid>
+                        <div class="static-loading">
+                            <span class="spinner-border" aria-hidden="true"></span>
+                            <span>Carregando coleções…</span>
+                        </div>
+                    </div>
+                </section>
+            </section>
+
+            <section class="spa-view" data-view="simulate" hidden>
+                <div class="simulation-shell">
+                    <button class="back-link" type="button" data-go-home>
+                        <i class="bi bi-arrow-left" aria-hidden="true"></i>
+                        <span>Escolher outra coleção</span>
+                    </button>
+
+                    <section class="simulation-heading">
+                        <span class="simulation-icon" aria-hidden="true"><i class="bi bi-box-seam"></i></span>
+                        <p class="eyebrow" data-simulation-collection></p>
+                        <h1>Quantos packs você quer abrir?</h1>
+                        <p>Cada pack sorteia 6 cartas desta coleção.</p>
+                    </section>
+
+                    <form class="simulation-form" data-simulation-form>
+                        <fieldset>
+                            <legend class="visually-hidden">Quantidade de packs</legend>
+                            <div class="simulation-options">
+                                <input class="btn-check" type="radio" name="quantidade_packs" id="qtd1" value="1" checked>
+                                <label class="quantity-option" for="qtd1"><strong>1</strong><span>pack</span></label>
+                                <input class="btn-check" type="radio" name="quantidade_packs" id="qtd10" value="10">
+                                <label class="quantity-option" for="qtd10"><strong>10</strong><span>packs</span></label>
+                                <input class="btn-check" type="radio" name="quantidade_packs" id="qtd100" value="100">
+                                <label class="quantity-option" for="qtd100"><strong>100</strong><span>packs</span></label>
+                                <input class="btn-check" type="radio" name="quantidade_packs" id="qtd1000" value="1000">
+                                <label class="quantity-option" for="qtd1000"><strong>1000</strong><span>packs</span></label>
+                                <input class="btn-check" type="radio" name="quantidade_packs" id="qtdPersonalizada" value="personalizada">
+                                <label class="quantity-option" for="qtdPersonalizada"><i class="bi bi-sliders"></i><span>Outra quantidade</span></label>
+                            </div>
+                        </fieldset>
+                        <div class="custom-quantity" data-custom-quantity hidden>
+                            <label for="quantidadePersonalizada">Digite a quantidade</label>
+                            <input type="number" min="1" max="10000" id="quantidadePersonalizada" value="25">
+                        </div>
+                        <button class="btn btn-primary btn-lg simulation-submit" type="submit">
+                            <i class="bi bi-stars" aria-hidden="true"></i>
+                            <span>Simular abertura</span>
+                        </button>
+                    </form>
+                </div>
+            </section>
+
+            <section class="spa-view" data-view="opening" hidden>
+                <section class="pack-opening" data-static-opening>
+                    <header class="opening-toolbar">
+                        <div>
+                            <span class="opening-kicker" data-opening-kicker></span>
+                            <strong data-opening-status>Pronto para abrir</strong>
+                        </div>
+                        <button class="skip-opening" type="button" data-skip-opening>
+                            Pular animação <i class="bi bi-skip-forward-fill" aria-hidden="true"></i>
+                        </button>
+                    </header>
+                    <div class="opening-progress" aria-hidden="true"><span data-opening-progress></span></div>
+                    <div class="opening-stage">
+                        <div class="pack-scene" data-pack-scene>
+                            <p class="pack-number" data-pack-number>Pack 1 de 1</p>
+                            <button class="booster-button" type="button" data-open-pack aria-label="Abrir pack">
+                                <span class="booster-pack" aria-hidden="true">
+                                    <span class="booster-seal booster-seal-top"></span>
+                                    <span class="booster-shine"></span>
+                                    <span class="booster-content">
+                                        <img src="" alt="" class="booster-logo" data-booster-logo hidden>
+                                        <span class="booster-brand" data-booster-brand>Vale Abrir?</span>
+                                        <span class="booster-orb"><i class="bi bi-stars"></i></span>
+                                        <span class="booster-copy" data-booster-name></span>
+                                        <span class="booster-card-count">6 cartas</span>
+                                    </span>
+                                    <span class="booster-seal booster-seal-bottom"></span>
+                                    <span class="booster-tear-line"></span>
+                                </span>
+                            </button>
+                            <h1 data-pack-heading>Abra seu pack</h1>
+                            <p data-pack-description>Toque no pack para rasgar e começar a revelar.</p>
+                            <button class="btn btn-primary btn-lg open-pack-action" type="button" data-open-pack>
+                                <i class="bi bi-stars" aria-hidden="true"></i><span>Abrir pack</span>
+                            </button>
+                        </div>
+
+                        <div class="reveal-scene" data-reveal-scene hidden>
+                            <div class="reveal-counter" data-reveal-counter></div>
+                            <div class="reveal-card-area" data-reveal-area>
+                                <span class="card-stack-layer card-stack-layer-one" aria-hidden="true"></span>
+                                <span class="card-stack-layer card-stack-layer-two" aria-hidden="true"></span>
+                            </div>
+                            <button class="btn btn-primary btn-lg reveal-next" type="button" data-reveal-next>
+                                <span>Próxima carta</span><i class="bi bi-arrow-right" aria-hidden="true"></i>
+                            </button>
+                            <p class="reveal-hint"><i class="bi bi-hand-index-thumb"></i> Toque na carta, arraste ou use a seta do teclado</p>
+                        </div>
+
+                        <div class="opening-complete" data-opening-complete hidden>
+                            <span class="complete-icon" aria-hidden="true"><i class="bi bi-check2"></i></span>
+                            <p class="eyebrow">Abertura concluída</p>
+                            <h1>Você revelou todas as cartas!</h1>
+                            <p>Agora veja todas as cartas e seus valores.</p>
+                            <button class="btn btn-primary btn-lg" type="button" data-show-result>
+                                <span>Ver resultado completo</span><i class="bi bi-arrow-right" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="confetti-layer" data-confetti aria-hidden="true"></div>
+                </section>
+            </section>
+
+            <section class="spa-view" data-view="result" hidden>
+                <section class="result-heading">
+                    <div>
+                        <p class="eyebrow" data-result-collection></p>
+                        <h1>Suas cartas</h1>
+                        <p data-result-description></p>
+                    </div>
+                    <div class="quick-actions">
+                        <button class="btn btn-primary" type="button" data-simulate-again>
+                            <i class="bi bi-arrow-repeat"></i><span>Simular novamente</span>
+                        </button>
+                        <button class="btn btn-outline-secondary" type="button" data-go-home>
+                            <i class="bi bi-grid"></i><span>Trocar coleção</span>
+                        </button>
+                    </div>
+                </section>
+                <section class="cards-value-summary" aria-label="Valor total das cartas">
+                    <span>Valor das cartas desta simulação</span>
+                    <strong data-result-value>R$ 0,00</strong>
+                    <small>Estimativa baseada no valor individual de cada carta sorteada.</small>
+                </section>
+                <section class="result-list" aria-labelledby="tituloCartasResultado">
+                    <div class="hall-section-heading">
+                        <h2 id="tituloCartasResultado">Cartas sorteadas</h2>
+                        <span data-result-types></span>
+                    </div>
+                    <div class="pulled-card-grid" data-result-grid></div>
+                </section>
+            </section>
+        </div>
+    </main>
+
+    <footer class="app-footer py-4 mt-3">
+        <div class="container-xl small">Vale Abrir? é um simulador independente e não é afiliado, patrocinado ou aprovado pela The Pokémon Company. Os valores das cartas são estimativas e podem variar.</div>
+    </footer>
+
+    <script src="./assets/app.js" defer></script>
+</body>
+</html>
