@@ -494,6 +494,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 <div class="pulled-card-image">
                     ${image ? `<img src="${escapeHtml(image)}" alt="Imagem de ${escapeHtml(card.nome)}" loading="lazy">` : "<span>Sem imagem</span>"}
                     <strong class="pulled-card-count">x${card.quantidade}</strong>
+                    <strong class="pulled-card-value-badge">${brl.format(Number(card.valor || 0))}</strong>
                 </div>
                 <div class="pulled-card-body">
                     <div><h3>${escapeHtml(card.nome)}</h3><p>${escapeHtml(card.raridade)}</p></div>
