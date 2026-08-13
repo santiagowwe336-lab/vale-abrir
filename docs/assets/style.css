@@ -1256,32 +1256,34 @@ textarea.form-control {
 }
 
 .result-list .pulled-card-grid {
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr));
 }
 
 .result-list .pulled-card {
-    display: flex;
-    min-height: 390px;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: 132px minmax(0, 1fr);
+    min-height: 184px;
     border-radius: 14px;
 }
 
 .result-list .pulled-card-image {
-    height: 240px;
+    height: 100%;
+    min-height: 184px;
     background: linear-gradient(145deg, #f5f8f5, #e8efea);
 }
 
 .result-list .pulled-card-image img {
-    padding: 1rem;
+    padding: 0.55rem;
 }
 
 .result-list .pulled-card-value-badge {
-    display: none;
+    display: block;
 }
 
 .result-list .pulled-card-body {
     display: flex;
     flex: 1;
+    min-width: 0;
     flex-direction: column;
 }
 
@@ -1312,6 +1314,22 @@ textarea.form-control {
 
 .card-price-total strong {
     color: var(--ink);
+}
+
+.result-list .card-price-row {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 0.1rem;
+    padding-top: 0.55rem;
+}
+
+.result-list .card-price-row strong {
+    white-space: nowrap;
+}
+
+.result-list .card-price-total {
+    margin-top: 0.35rem;
+    padding-top: 0;
 }
 
 @media (max-width: 991.98px) {
@@ -1356,6 +1374,7 @@ textarea.form-control {
     }
 
     .result-list .pulled-card-grid {
+        grid-template-columns: 1fr;
         gap: 0.75rem;
     }
 
